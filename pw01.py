@@ -6,6 +6,7 @@ import tkinter as tk
 import tkinter.filedialog
 import numpy as np
 import matplotlib.pyplot as plt
+
 # from __future__ import print_function
 
 
@@ -13,7 +14,12 @@ global mypath
 mypath = 'c:\\'
 
 
-def open_imp_file(path):            # imp File
+def qquit():
+    # window.destroy()
+    quit()
+
+
+def open_imp_file(path):                                            # imp File
     parameters = []
     d_freq = []
     d_ohm = []
@@ -84,7 +90,7 @@ def OpenFile():
     name = tkinter.filedialog.askopenfilename(initialdir=mypath, filetypes=(
         ("imp", "*.imp"), ("All Files", "*.*")), title="Choose a file.")
     print(name)
-    mypath = os.path.dirname(name)                  # 改變路徑
+    mypath = os.path.dirname(name)                      # 改變路徑
     # Using try in case user types in unknown file or closes without choosing
     # a file.
     try:
@@ -107,16 +113,16 @@ def hit_me():
 
         fig, ax1 = plt.subplots()
 
-        color = 'tab:red'  # 設定紅色
-        ax1.set_xlabel('Frequency (KHz)')  # 設定標籤文字
+        color = 'tab:red'                                               # 設定紅色
+        ax1.set_xlabel('Frequency (KHz)')                               # 設定標籤文字
         ax1.set_xlim(d1[0], d1[1])
         new_ticks = np.linspace(
-            d1[0], d1[1], ((d1[1] - d1[0]) / d1[2] + 1))  # 座標軸標籤數
+            d1[0], d1[1], ((d1[1] - d1[0]) / d1[2] + 1))                # 座標軸標籤數
         ax1.set_xticks(new_ticks)
 
-        ax1.set_ylabel('Z(Ω)', color=color)  # 標籤文字顏色
-        ax1.tick_params(axis='y', labelcolor=color)  # 座標標籤上色
-        ax1.semilogy(t, data1, color=color)  # 加線,及上色
+        ax1.set_ylabel('Z(Ω)', color=color)                            # 標籤文字顏色
+        ax1.tick_params(axis='y', labelcolor=color)                     # 座標標籤上色
+        ax1.semilogy(t, data1, color=color)                             # 加線,及上色
         ax1.set_ylim(d1[3], d1[4])
         # ax1.set_xticks(range(5))
         # ax1.set_xticklabels(['10', '100', '1K', '10k', '100k'])
@@ -155,8 +161,9 @@ def hit_me():
         # plt.grid(which="both")
         plt.show()
         return
-    except BaseException:
-        message_box('警告', '沒有選擇檔案', 0)                          # 跳出對話方塊
+    except Exception as e:
+        logging.exception(e)                                        # 輸出錯誤,配合 import logging:
+        message_box('警告', '沒有選擇檔案', 0)                      # 跳出對話方塊
         return
 
 
@@ -165,13 +172,20 @@ if __name__ == '__main__':
     # print(sys.argv)
     # input()
     window = tk.Tk()
+    window.protocol('WM_DELETE_WINDOW', qquit)      # tk視窗關閉事件,呼叫qquit
     window.title('my window')
-    window.geometry('300x100')
+    window.geometry('300x100+10+10')
     b = tk.Button(window,
-                  text='開啟檔案',  # 显示在按钮上的文字
+                  text='開啟檔案',                  # 显示在按钮上的文字
                   width=15, height=2,
-                  command=hit_me)  # 点击按钮式执行的命令
-    b.pack(anchor='nw', side='left')  # 按钮位置
+                  command=hit_me)                   # 点击按钮式执行的命令
+    b.pack(anchor='nw', side='left')                # 按钮位置
+    c = tk.Button(window,                           # 關閉按鍵
+                  text='Close',                     # 显示在按钮上的文字
+                  width=15, height=2,
+                  command=qquit)                    # 点击按钮式执行的命令
+    c.pack(anchor='nw', side='left')                # 按钮位置
+
     print(len(sys.argv))
     try:
         if len(sys.argv) > 1:
