@@ -19,7 +19,7 @@ def qquit():
     quit()
 
 
-def open_imp_file(path):                                            # imp File
+def open_imp_file(path):                                           # imp File
     parameters = []
     d_freq = []
     d_ohm = []
