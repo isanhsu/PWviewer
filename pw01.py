@@ -120,23 +120,36 @@ def hit_me():
         ax1.set_ylim(d1[3], d1[4])
         # ax1.set_xticks(range(5))
         # ax1.set_xticklabels(['10', '100', '1K', '10k', '100k'])
-
-        plt.grid(which='both')                                          # 劃格線參數
-        # plt.grid(which='minor')
-        # plt.grid()
+        plt.annotate(                                                   # 標記
+            str(int(d1[17])) + 'Ω@' + str(d1[16]) + 'KHz', xy=(
+                d1[16], d1[17]), xycoords='data', xytext=(
+                -60, +20), textcoords='offset points', arrowprops=dict(
+                arrowstyle="->", connectionstyle="arc3,rad=.2"))
+        plt.grid(which='both')                                          # 劃格線參數 which='minor' , which='both'
 
         ax2 = ax1.twinx()                                               # 插入第二軸於第一軸
 
         color = 'tab:blue'                                              # 設定藍色
         ax2.set_ylabel('θ(°)', color=color)                            # 設定標籤文字
-        ax2.tick_params(axis='y', labelcolor=color)                     # 座標標籤上色
-        ax2.plot(t, data2, color=color)                                 # 加線,及上色
+        ax2.tick_params(
+            axis='y',
+            labelcolor=color)                                           # 座標標籤上色
+        # 加線,及上色
+        ax2.plot(t, data2, color=color)
         ax2.set_ylim(-90, 90)
-        new_ticks = np.linspace(-90, 90, 13)                            # 座標軸標籤數
+        # 座標軸標籤數
+        new_ticks = np.linspace(-90, 90, 13)
         ax2.set_yticks(new_ticks)
         fig.tight_layout()                                              # 調整左邊標籤位置
-        plt.subplots_adjust(top=0.9)                                    # 設定上的邊界
-        plt.title("Impedance/Phase Angle vs. Frequency:", loc='left')   # 圖標題,靠左
+        # 設定上的邊界
+        plt.subplots_adjust(top=0.91)
+        plt.title(
+            "Impedance/Phase Angle vs. Frequency:\n",
+            loc='left')  # 圖標題,靠左
+        plt.title('Right Title', loc='right')
+        # plt.annotate(
+        #     '123dB@40KHz',
+        #     xy=(40, 0), arrowprops=dict(arrowstyle='-'), xytext=(38, 10))
 
         # plt.annotate('local max', xy=(0, 0), fontsize=15)
         # plt.grid(which="both")
