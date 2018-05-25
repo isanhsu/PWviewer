@@ -6,6 +6,7 @@ import tkinter as tk
 import tkinter.filedialog
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 # from __future__ import print_function
 
@@ -30,7 +31,7 @@ def open_imp_file(path):                                           # imp File
     i_documents_id = path
     f.close()
     for i in range(25):
-        print(str(i) + ',' + s[i])
+        # print(str(i) + ',' + s[i])
         if i < 5:
             a = s[i].split(',')
             parameters.append(float(a[1]))
@@ -71,12 +72,12 @@ def open_imp_file(path):                                           # imp File
 
     j = int((parameters[1] - parameters[0]) / parameters[7])
     for i in range(j + 1):
-        print(s[i + 25])
+        # print(s[i + 25])
         a = s[i + 25].split(',')
         d_freq.append(float(a[0]))
         d_ohm.append(float(a[1]))
         d_deg.append(float(a[2]))
-    print(i_documents_id)
+    # print(i_documents_id)
     return parameters, d_freq, d_ohm, d_deg
 
 
@@ -86,10 +87,10 @@ def message_box(title, text, style):
 
 def OpenFile():
     global mypath
-    print(mypath)
+    # print(mypath)
     name = tkinter.filedialog.askopenfilename(initialdir=mypath, filetypes=(
         ("imp", "*.imp"), ("All Files", "*.*")), title="Choose a file.")
-    print(name)
+    # print(name)
     mypath = os.path.dirname(name)                      # 改變路徑
     # Using try in case user types in unknown file or closes without choosing
     # a file.
@@ -101,6 +102,20 @@ def OpenFile():
 
 def handle_close(evt):
     print('Closed Figure!')
+
+
+def imp_y_axis_coordinates(l, h):
+    ds1 = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000]
+    ds2 = ['1', '10', '100', '1K', '10K', '100K', '1M', '10M', '100M']
+    da1 = []
+    da2 = []
+    a1 = int(math.log10(l))
+    a2 = int(math.log10(h)) + 1
+    for i in range(a1, a2):
+        print(ds1[i], ds2[i])
+        da1.append(ds1[i])
+        da2.append(ds2[i])
+    return da1, da2
 
 
 def hit_me():
@@ -117,14 +132,15 @@ def hit_me():
         ax1.set_xlabel('Frequency (KHz)')                               # 設定標籤文字
         ax1.set_xlim(d1[0], d1[1])
         new_ticks = np.linspace(
-            d1[0], d1[1], ((d1[1] - d1[0]) / d1[2] + 1))                # 座標軸標籤數
+            d1[0], d1[1], (int((d1[1] - d1[0]) / d1[2] + 1)))                # 座標軸標籤數
         ax1.set_xticks(new_ticks)
 
         ax1.set_ylabel('Z(Ω)', color=color)                            # 標籤文字顏色
         ax1.tick_params(axis='y', labelcolor=color)                     # 座標標籤上色
         ax1.semilogy(t, data1, color=color)                             # 加線,及上色
         ax1.set_ylim(d1[3], d1[4])
-        # ax1.set_xticks(range(5))
+        ds1, ds2 = imp_y_axis_coordinates(d1[3], d1[4])                 # y軸標 變文字
+        plt.yticks(ds1, ds2)
         # ax1.set_xticklabels(['10', '100', '1K', '10k', '100k'])
         plt.annotate(                                                   # 標記
             str(int(d1[17])) + 'Ω@' + str(d1[16]) + 'KHz', xy=(
@@ -186,17 +202,19 @@ if __name__ == '__main__':
                   command=qquit)                    # 点击按钮式执行的命令
     c.pack(anchor='nw', side='left')                # 按钮位置
 
-    print(len(sys.argv))
+    # print(len(sys.argv))
     try:
         if len(sys.argv) > 1:
             a = 'path = ' + os.path.splitext(sys.argv[1])[-1]
-            # message_box('Your title', sys.argv[1] + ' , ' + a, 0)  # 跳出對話方塊
+            message_box('Your title', sys.argv[1] + ' , ' + a, 0)  # 跳出對話方塊
             # OpenFile()
             # merge(sys.argv[1])
-
+        else:
+            message_box('Your title', 'No file', 0)  # 跳出對話方塊
+            window.mainloop()
+            
     except Exception as e:
         logging.exception(e)                # 輸出錯誤,配合 import logging
         # merge(OpenFile())
 
     # message_box('Your title', 'open file', 0)  # 跳出對話方塊
-    window.mainloop()
